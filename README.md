@@ -54,7 +54,8 @@ The workflow retrieves topic ideas from Google Sheets, generates post drafts usi
 
 The following diagram illustrates the full automation workflow from idea intake to content generation:
 
-![LinkedIn Post Generator Workflow](assets/workflow-diagram.png)
+![image](https://github.com/user-attachments/assets/604d39d2-d7cb-4174-98ed-c0166368f604)
+
 
 ---
 
@@ -87,4 +88,4 @@ A content planner submits a new topic to Google Sheets and sets its status to "c
 
 ## 📄 License
 
-This project is shared for demonstration and educational purposes. For other usage scenarios, please contact the project maintainer.
+This project is shared for demonstration and educational purposes. 
