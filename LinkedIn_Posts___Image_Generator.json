@@ -1,0 +1,1434 @@
+{
+  "name": "LinkedIn Posts & Image Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please generate three LinkedIn post drafts and their corresponding image descriptions for Vivadrive. Ensure that each post adheres to the specified character limit.\n-Topic: {{ $('Merge Sheets').item.json.Topic }}\n-Type: {{ $('Merge Sheets').item.json.Type }}\n-Reference: {{ $('Merge Sheets').item.json.References }}\n\nOutput Format:\nReturn a single string with the following structure:\n{\"post1\":\"\",\"image_description1\":\"\",\"post2\":\"\",\"image_description2\":\"\",\"post3\":\"\",\"image_description3\":\"\"}\n\nDo not add any additional information to the response.\nDo not include new lines in the output.\nPlease write the posts in {{ $('Merge Sheets').item.json.Language }} and the image in English.",
+        "options": {
+          "systemMessage": "=Role:\nYou are a specialized AI assistant designed to create engaging LinkedIn posts and generate professional, brand-aligned image descriptions for Vivadrive, an innovative AI-powered fleet management company. Your purpose is to craft compelling content that highlights Vivadrive's expertise in artificial intelligence, fleet electrification, and data-driven mobility solutions.\n\nScope:\n1. LinkedIn Post Generation\n-Generate three LinkedIn post drafts based on the provided Topic and Type.\n-STRICTLY follow the character count requirements specified in the Type parameter for each post.\n-If a Reference is provided, read and analyze its content first. Base the posts primarily on insights, data, or messaging from the reference. Use the Topic to guide the focus.\n-If no reference is provided, generate content based solely on the Topic.\n-Each LinkedIn post must independently meet the defined character count range. Do not split the total count across posts.\n-Each post should be a complete thought, with its own structure and clarity, tailored to its tone.\n\n2. Image Description Generation\n-For each post, create a realistic and professional image description that visually supports and reinforces the post’s message.\n-Image descriptions must be:\n-Corporate-focused (avoid abstract, playful, or overly conceptual visuals)\n-Brand-aligned (clean, modern, professional aesthetic in line with Vivadrive's visual identity)\n-Message-driven (reflect key ideas from the post such as data points, industry trends, or innovations)\n-Context-aware (clearly connected to the post's theme and intended audience)\n-Visually descriptive – specify setting, key objects, technology, people, and mood (e.g., “a fleet manager reviewing EV analytics on a dashboard in a modern office”)\n-Do not include a lot of text or words within the image itself. Focus on clear, visual representation of the idea.\n-200–300 characters in length to ensure clarity, specificity, and optimal image generation performance.\n\nGoal and Tone:\nVivadrive is a thought leader in AI-powered fleet management and sustainable mobility. Your content must reflect:\n-Technological authority in AI and electrification\n-Industry expertise through data and insight\n-Forward-looking vision for the future of transportation\n-Clear, credible, and engaging storytelling for a professional audience\n\nTarget Audience:\nFleet managers, C-level executives, corporate decision-makers, mobility professionals, regulators, and sustainability officers.\n\nCommand:\n1.ANALYZE the provided Topic and Type parameters. If the Reference is not empty, review the content.\n2.COUNT CHARACTERS for each post to ensure strict adherence to the Type’s character limits.\n3.Generate the first LinkedIn post (professional tone)\n4.Create a corporate image description aligned with the post’s core insight\n5.Generate the second LinkedIn post (approachable tone)\n6.Create a matching image description tied to the message\n7.Generate the third LinkedIn post (visionary tone)\n8.Create a strategic, forward-looking image description reflecting the post"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1240,
+        0
+      ],
+      "id": "fa1b684a-380e-4f90-9128-f51ec11c4859",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=111\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1420,
+        280
+      ],
+      "id": "cab9ac39-6f10-4ad9-949a-a7272e36c23a",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4",
+          "mode": "list",
+          "cachedResultName": "Content Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1200360773,
+          "mode": "list",
+          "cachedResultName": "Prompt",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit#gid=1200360773"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        340,
+        100
+      ],
+      "id": "7d621439-9820-4e55-a422-b5dac7bc503f",
+      "name": "Read prompt",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O7VoVecwDIs7jXmY",
+          "name": "VD - CM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "inputs",
+              "value": "=Depict: {{ $('OpenAI').item.json.message.content.image_description1 }}\n\nStyle: {{ $json.Style }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ee30f999-646c-48b4-907c-4450104f9bfb",
+      "name": "Generate image 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2200,
+        -240
+      ],
+      "notesInFlow": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ufM4cTiGbpX53SrO",
+          "name": "Huggingface - CM"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": " "
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "inputs",
+              "value": "=Depict: {{ $('OpenAI').item.json.message.content.image_description2 }}\n\nStyle: {{ $json.Style }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "75bbb0b4-f442-4f87-a82d-3ff03f992a27",
+      "name": "Generate image 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2200,
+        0
+      ],
+      "notesInFlow": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ufM4cTiGbpX53SrO",
+          "name": "Huggingface - CM"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": " "
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "inputs",
+              "value": "=Depict: {{ $('OpenAI').item.json.message.content.image_description3 }}\nStyle: {{ $json.Style }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4eeb85b4-4cf9-424b-9367-fa37ffd65ee6",
+      "name": "Generate image 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2200,
+        240
+      ],
+      "notesInFlow": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ufM4cTiGbpX53SrO",
+          "name": "Huggingface - CM"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": " "
+    },
+    {
+      "parameters": {
+        "name": "={{ $execution.id }}",
+        "driveId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1RqB_eHGABJP4oJ-AcED1yp3kruWlrTIy",
+          "mode": "url"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1GziyFbVNFXaNLziZ5HH8mZD0gVtQj_B7",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2480,
+        -240
+      ],
+      "id": "93a3b748-3b2f-4d8c-b2b9-c63f6f3a18ce",
+      "name": "Save image 1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "qOgsIfouJQUKeuJI",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $execution.id }}",
+        "driveId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1RqB_eHGABJP4oJ-AcED1yp3kruWlrTIy",
+          "mode": "url"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1GziyFbVNFXaNLziZ5HH8mZD0gVtQj_B7",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2480,
+        0
+      ],
+      "id": "f4a3618e-5ac9-43e0-be2c-890cead6df63",
+      "name": "Save image 2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "qOgsIfouJQUKeuJI",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $execution.id }}",
+        "driveId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1RqB_eHGABJP4oJ-AcED1yp3kruWlrTIy",
+          "mode": "url"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1GziyFbVNFXaNLziZ5HH8mZD0gVtQj_B7",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2480,
+        240
+      ],
+      "id": "b8fe6c1f-dc3f-4f1f-a713-1716ecafb952",
+      "name": "Save image 3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "qOgsIfouJQUKeuJI",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2760,
+        0
+      ],
+      "id": "945e7845-a630-4ee3-9c5b-c70224236a9d",
+      "name": "Merge Outputs",
+      "executeOnce": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "Prompt ID",
+              "field2": "Prompt ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        580,
+        -20
+      ],
+      "id": "ba40857b-e935-4fb9-ae8c-cc53057a186b",
+      "name": "Merge Sheets"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4",
+          "mode": "list",
+          "cachedResultName": "Content Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Draft1-Text": "={{ $('OpenAI').first().json.message.content.post1 }}",
+            "Draft2-Text": "={{ $('OpenAI').first().json.message.content.post2 }}",
+            "Draft3-Text": "={{ $('OpenAI').first().json.message.content.post3 }}",
+            "Topic": "={{ $('Status update').first().json.Topic }}",
+            "Draft3-Graphic": "={{ $(\"Save image 3\").first().json.webViewLink }}",
+            "Draft1-Graphic": "={{ $(\"Save image 1\").first().json.webViewLink }}",
+            "Draft2-Graphic": "={{ $(\"Save image 2\").first().json.webViewLink }}",
+            "Status": "=Draft Review"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "References",
+              "displayName": "References",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Medium",
+              "displayName": "Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Prompt ID",
+              "displayName": "Prompt ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft1-Text",
+              "displayName": "Draft1-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft1-Graphic",
+              "displayName": "Draft1-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft2-Text",
+              "displayName": "Draft2-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft2-Graphic",
+              "displayName": "Draft2-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft3-Text",
+              "displayName": "Draft3-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft3-Graphic",
+              "displayName": "Draft3-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final-Text",
+              "displayName": "Final-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final-Graphic",
+              "displayName": "Final-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Publication Date",
+              "displayName": "Publication Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3020,
+        0
+      ],
+      "id": "35462ab7-f3fa-41ce-b0b8-bacce95e398e",
+      "name": "Update sheet",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O7VoVecwDIs7jXmY",
+          "name": "VD - CM"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4",
+          "mode": "list",
+          "cachedResultName": "Content Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topic": "={{ $json.Topic }}",
+            "Status": "Drafting"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "References",
+              "displayName": "References",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Medium",
+              "displayName": "Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prompt ID",
+              "displayName": "Prompt ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft1-Text",
+              "displayName": "Draft1-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft1-Graphic",
+              "displayName": "Draft1-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft2-Text",
+              "displayName": "Draft2-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft2-Graphic",
+              "displayName": "Draft2-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft3-Text",
+              "displayName": "Draft3-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft3-Graphic",
+              "displayName": "Draft3-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Final-Text",
+              "displayName": "Final-Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final-Graphic",
+              "displayName": "Final-Graphic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Publication Date",
+              "displayName": "Publication Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "6959b2bc-817f-4fdb-a103-41d8694d3fc8",
+      "name": "Status update",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O7VoVecwDIs7jXmY",
+          "name": "VD - CM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4",
+          "mode": "list",
+          "cachedResultName": "Content Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Concept Reviewed"
+            },
+            {
+              "lookupColumn": "Image",
+              "lookupValue": "Yes"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        340,
+        -120
+      ],
+      "id": "709ba095-7588-4703-91c2-1a0d66fac2c0",
+      "name": "Read ideas",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O7VoVecwDIs7jXmY",
+          "name": "VD - CM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        820,
+        -20
+      ],
+      "id": "1d246fa5-e163-40ee-ac72-c743f37ce916",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=A draft post for {{ $('Merge Sheets').first().json.Topic }} was created succesfully!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        -620
+      ],
+      "id": "b0d5891a-084c-47d0-bc44-a46be37593de",
+      "name": "Discord1",
+      "webhookId": "510895bb-7617-4181-ab0e-063aadbf117f",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "OQaJTT0Mhj9fpzfm",
+          "name": "Discord Webhook account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4",
+          "mode": "list",
+          "cachedResultName": "Content Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 458302780,
+          "mode": "list",
+          "cachedResultName": "Image_prompt",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B1vDl5OlvyNi8eOfYruRLbwhzqRujmiC2bBdQYcji4/edit#gid=458302780"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "767d916a-504e-4f7c-8f2f-ba58e7e090b6",
+      "name": "Get image prompt",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O7VoVecwDIs7jXmY",
+          "name": "VD - CM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Transform the following string: {{ $json.output }} into a valid JSON format with this structure:\n{\n  \"post1\": \"  \",\n  \"image_description1\": \"\",\n  \"post2\": \"\",\n  \"image_description2\": \"\",\n  \"post3\": \"\",\n  \"image_description3\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1580,
+        0
+      ],
+      "id": "2cae247b-b789-4e80-a5d5-3bdf80fcf955",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "39fjpb6Bo98Z0ME3",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1260,
+        220
+      ],
+      "id": "cf469378-125c-4015-8779-cdc90f546d72",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "39fjpb6Bo98Z0ME3",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        -20
+      ],
+      "id": "acc27932-b4d6-42d7-816b-a105aa447fed",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "Triggers the automation daily to check for new content ideas with status \"concept review\" in the Google Sheet.",
+        "height": 480,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        40,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "25eb7411-85b0-4265-aa91-0981af85b6b5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Reads all rows from the Ideas sheet containing topic, language, type, reference, and status.\n\nReads base prompt text used for generating LinkedIn posts.\n\n\n\n",
+        "height": 640,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        260,
+        -280
+      ],
+      "typeVersion": 1,
+      "id": "3e1d8ada-f253-485a-899a-dd81031ead45",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Merges the Ideas and Prompt data into a single dataset for processing by the loop.\n\n",
+        "height": 480,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        540,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "e4e7714e-aacc-4e30-8bde-8db2df094d43",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Loops through each row (idea) that has status \"concept review\" and processes it individually.\n\n\n",
+        "height": 480,
+        "width": 220,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        760,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "58f22502-31a4-4717-bd6b-5d5b7f2c4a33",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Updates the current row's status to \"drafting\" to indicate that generation has started.\n\n",
+        "height": 480,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1000,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "37526896-be24-4cb6-851d-4dc71b5a94a2",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "* Handles the structured system prompt, memory, and tools for communicating with the OpenAI Message Model.\n* Generates 3 variations of the LinkedIn post content using the prompt and idea.\n* Uses the visual prompt to generate a unique image variation (1 of 3) using AI image generation tools.\n\n",
+        "height": 660,
+        "width": 320,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1220,
+        -220
+      ],
+      "typeVersion": 1,
+      "id": "ce40cd4d-43e2-43c2-8c7c-99e19163694c",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "\n",
+        "height": 480,
+        "width": 300,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1560,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "59d0fe7d-9820-42cf-81dc-71a70535ad4e",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "Gets image prompt ",
+        "height": 480,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1880,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "aa363a7d-761f-4fc2-8adb-e9008ab4c2a5",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "Generate Images",
+        "height": 780,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2160,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "ba1dcfda-3633-4842-b9a1-e09f313da421",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "Save Images",
+        "height": 780,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2420,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "55bf4378-6990-4be7-957b-708763c84c1f",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "Combines all generated image URLs",
+        "height": 480,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        -200
+      ],
+      "id": "8aff8e17-646d-4aed-b8a9-ca74d331cd45",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "Final update of the sheet, saving image links next to the generated text.",
+        "height": 480,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2980,
+        -200
+      ],
+      "id": "a80630b0-146a-4a41-97c1-26a6fe1c7ab7",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "Sends a message to a Discord channel informing that the post has been generated and is ready for review.",
+        "height": 420,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        -780
+      ],
+      "id": "004f983b-48b4-4872-950e-40c338f50dbe",
+      "name": "Sticky Note12"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read prompt": {
+      "main": [
+        [
+          {
+            "node": "Merge Sheets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Generate image 1": {
+      "main": [
+        [
+          {
+            "node": "Save image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate image 2": {
+      "main": [
+        [
+          {
+            "node": "Save image 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate image 3": {
+      "main": [
+        [
+          {
+            "node": "Save image 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save image 1": {
+      "main": [
+        [
+          {
+            "node": "Merge Outputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save image 2": {
+      "main": [
+        [
+          {
+            "node": "Merge Outputs",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Save image 3": {
+      "main": [
+        [
+          {
+            "node": "Merge Outputs",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge Outputs": {
+      "main": [
+        [
+          {
+            "node": "Update sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status update": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read ideas": {
+      "main": [
+        [
+          {
+            "node": "Merge Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Discord1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord1": {
+      "main": [
+        []
+      ]
+    },
+    "Get image prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate image 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate image 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate image 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Get image prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read ideas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4d5ea533-3547-4f00-ac0c-f10ac5096a37",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5aa5608c063f9a5af1b19fba94653fe7c2a996710129424fdbb744132f878fab"
+  },
+  "id": "Fo7PMnbeRdBe53Y1",
+  "tags": []
+}
