@@ -84,8 +84,3 @@ The following diagram illustrates the full automation workflow from idea intake 
 
 A content planner submits a new topic to Google Sheets and sets its status to "concept review." The workflow automatically generates three tailored LinkedIn posts, creates matching visuals, updates the sheet with content and image links, and alerts the team via Discord.
 
----
-
-## 📄 License
-
-This project is shared for demonstration and educational purposes. 
